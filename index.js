@@ -28,11 +28,6 @@ function readData() {
         item[prop] = Number(item[prop]);
       });
     });
-
-    data = data.sort((a, b) => {
-      return a['Transaction Date'] - b['Transaction Date'];
-    });
-
     return data;
   });
 }
@@ -42,6 +37,10 @@ function groupByDate(data, starting, groupSize) {
   var from = starting;
   var to = starting;
   var resultItem;
+
+  data = data.sort((a, b) => {
+    return a['Transaction Date'] - b['Transaction Date'];
+  });
 
   for (var item of data) {
     while (!resultItem || item['Transaction Date'] > to) {
@@ -56,8 +55,8 @@ function groupByDate(data, starting, groupSize) {
       result.push(resultItem);
     }
     resultItem.entries.push(item);
-    resultItem.totalOut += item['Debit Amount'];
-    resultItem.totalIn += item['Credit Amount'];
+    resultItem.totalOut += item['Debit Amount'] || 0;
+    resultItem.totalIn += item['Credit Amount'] || 0;
   }
 
   var runningTotal = 0;
@@ -69,6 +68,18 @@ function groupByDate(data, starting, groupSize) {
   })
 
   return result;
+}
+
+function createFakeEntries(starting, ending, frequency, obj) {
+  const entries = [];
+
+  for (var date = starting; date < ending; date = new Date(date.valueOf() + frequency)) {
+    entries.push(Object.assign({
+      "Transaction Date": date
+    }, obj));
+  }
+
+  return entries;
 }
 
 const app = express();
@@ -84,6 +95,15 @@ app.use(express.static(__dirname + '/public'));
 
 app.get('/', (req, res) => {
   readData().then(data => {
+    data = data.concat(createFakeEntries(
+      new Date('2016-01-03'),
+      new Date('2016-10-02'),
+      day * 7,
+      {
+        "Transaction Description": "Allowance",
+        "Credit Amount": 14549.21 / 39
+      }
+    ));
     res.render('index.html', {
       data,
       groupedData: groupByDate(data, new Date('2016-01-03'), day * 7)

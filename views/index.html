@@ -36,9 +36,9 @@
                   <td>{{ entry['Transaction Description'] }}</td>
                   <td>
                     {% if entry['Debit Amount'] %}
-                      {{ -entry['Debit Amount'] }}
+                      {{ -entry['Debit Amount'] | round(2) }}
                     {% else %}
-                      {{ entry['Credit Amount'] }}
+                      {{ entry['Credit Amount'] | round(2) }}
                     {% endif %}
                   </td>
                 </tr>
