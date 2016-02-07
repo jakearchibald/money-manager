@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Money manager</title>
+    <link rel="stylesheet" href="/style.css">
+  </head>
+  <body>
+    <table class="group-table">
+      <tr>
+        <th>Week starting</th>
+        <th>Money in</th>
+        <th>Money out</th>
+        <th>Difference</th>
+        <th>Running total</th>
+      </tr>
+      {% for item in groupedData %}
+        <tr class="group-row">
+          <td>{{ item.starting | date("MMM Do") }}</td>
+          <td>{{ item.totalIn | round(2) }}</td>
+          <td>{{ item.totalOut | round(2) }}</td>
+          <td>{{ (item.totalIn - item.totalOut) | round(2) }}</td>
+          <td>{{ item.runningTotal | round(2) }}</td>
+          <td><button class="expand-button">Expand</button></td>
+        </tr>
+        <tr class="detail-row hidden">
+          <td colspan="5">
+            <table>
+              <tr>
+                <th>Date</th>
+                <th>Name</th>
+                <th>Amount</th>
+              </tr>
+              {% for entry in item.entries %}
+                <tr>
+                  <td>{{ entry['Transaction Date'] | date("MMM Do") }}</td>
+                  <td>{{ entry['Transaction Description'] }}</td>
+                  <td>
+                    {% if entry['Debit Amount'] %}
+                      {{ -entry['Debit Amount'] }}
+                    {% else %}
+                      {{ entry['Credit Amount'] }}
+                    {% endif %}
+                  </td>
+                </tr>
+              {% endfor %}
+            </table>
+          </td>
+        </tr>
+      {% endfor %}
+    </table>
+    <script src="/script.js"></script>
+  </body>
+</html>

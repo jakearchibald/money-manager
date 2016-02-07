@@ -1,0 +1,16 @@
+{
+  "name": "money-manager",
+  "version": "1.0.0",
+  "description": "",
+  "scripts": {
+    "serve": "node index.js"
+  },
+  "private": true,
+  "dependencies": {
+    "csv-parse": "^1.0.1",
+    "express": "^4.13.4",
+    "nunjucks": "^2.3.0",
+    "nunjucks-date-filter": "^0.1.1",
+    "promisify-node": "^0.3.0"
+  }
+}
